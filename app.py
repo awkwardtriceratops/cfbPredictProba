@@ -4,8 +4,10 @@ import requests
 import json
 import cfbd
 import streamlit as st
+import os
 from pandas import json_normalize
-apiKey='7H4eHZRnvnXTUKLltnNusCffvs6YaaLKr1R5gQme50KBHpBDSFkRit7dbUISdAi9'
+#use enivronment variable to store the api key
+apiKey=os.getenv('CFBDAPI')
 configuration = cfbd.Configuration()
 configuration.api_key['Authorization'] = apiKey
 configuration.api_key_prefix['Authorization'] = 'Bearer'
