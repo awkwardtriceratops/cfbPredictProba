@@ -16,7 +16,8 @@ api_instance = cfbd.BettingApi(cfbd.ApiClient(configuration))
 # Streamlit app
 @st.cache_data
 def get_lines():
-    api_response=api_instance.get_lines(year=2024,week=9)
+    # 10/31/2024 is week 10
+    api_response=api_instance.get_lines(year=2024,week=10)
     completeDF=pd.DataFrame()
     for i in range(len(api_response)):
         df=pd.DataFrame(api_response[i].to_dict())
@@ -46,7 +47,7 @@ def get_lines():
     displayDF=smallDF.groupby(['home_team','away_team','favorite','id']).agg({'aggmoneyline':'mean','maxImpliedOdds':'mean','home_implied_odds':'mean','away_implied_odds':'mean'}).sort_values(by='maxImpliedOdds',ascending=False)
     #pull the odds from the metrics
     api_instance_3=cfbd.MetricsApi(cfbd.ApiClient(configuration))
-    prob=api_instance_3.get_pregame_win_probabilities(year=2024,week=9) 
+    prob=api_instance_3.get_pregame_win_probabilities(year=2024,week=10) 
     probDF=pd.DataFrame()
     for game in prob:
         probDF=probDF._append(game.to_dict(),ignore_index=True)
