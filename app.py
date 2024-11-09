@@ -5,6 +5,7 @@ import json
 import cfbd
 import streamlit as st
 import os
+import datetime as dt
 from pandas import json_normalize
 #use enivronment variable to store the api key
 apiKey=os.getenv('CFBDAPI')
@@ -17,7 +18,10 @@ api_instance = cfbd.BettingApi(cfbd.ApiClient(configuration))
 @st.cache_data
 def get_lines():
     # 10/31/2024 is week 10
-    api_response=api_instance.get_lines(year=2024,week=10)
+    today=dt.datetime.now()
+    weekDiff=today-dt.datetime(2024,10,31)
+    weeks=int(weekDiff.days/7)
+    api_response=api_instance.get_lines(year=2024,week=10+weeks)
     completeDF=pd.DataFrame()
     for i in range(len(api_response)):
         df=pd.DataFrame(api_response[i].to_dict())
@@ -47,7 +51,7 @@ def get_lines():
     displayDF=smallDF.groupby(['home_team','away_team','favorite','id']).agg({'aggmoneyline':'mean','maxImpliedOdds':'mean','home_implied_odds':'mean','away_implied_odds':'mean'}).sort_values(by='maxImpliedOdds',ascending=False)
     #pull the odds from the metrics
     api_instance_3=cfbd.MetricsApi(cfbd.ApiClient(configuration))
-    prob=api_instance_3.get_pregame_win_probabilities(year=2024,week=10) 
+    prob=api_instance_3.get_pregame_win_probabilities(year=2024,week=10+weeks) 
     probDF=pd.DataFrame()
     for game in prob:
         probDF=probDF._append(game.to_dict(),ignore_index=True)
